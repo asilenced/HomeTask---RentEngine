@@ -47,7 +47,7 @@ export default function MapView({ lat, lon, amenities, addressLabel }: MapViewPr
 
   if (!MAPBOX_TOKEN) {
     return (
-      <div className="w-full h-80 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600">
+      <div className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 min-h-[320px]">
         Map unavailable: Mapbox token not set
       </div>
     );
@@ -56,7 +56,7 @@ export default function MapView({ lat, lon, amenities, addressLabel }: MapViewPr
   return (
     <div
       ref={containerRef}
-      className="w-full h-80 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+      className="w-full rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm"
       style={{ minHeight: 320 }}
     />
   );
