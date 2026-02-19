@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { geocodeAddress } from "@/lib/mapbox";
 import { fetchNearbyAmenities } from "@/lib/overpass";
@@ -22,9 +23,9 @@ export default async function InsightsPage({ searchParams }: PageProps) {
     return (
       <main className="min-h-screen p-8 max-w-4xl mx-auto">
         <p className="text-red-600">Mapbox token not configured. Set NEXT_PUBLIC_MAPBOX_TOKEN.</p>
-        <a href="/" className="mt-4 inline-block text-blue-600 hover:underline">
-          ← Back to search
-        </a>
+        <Link href="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          Back to search
+        </Link>
       </main>
     );
   }
@@ -34,9 +35,9 @@ export default async function InsightsPage({ searchParams }: PageProps) {
     return (
       <main className="min-h-screen p-8 max-w-4xl mx-auto">
         <p className="text-red-600">Address not found. Try a different search.</p>
-        <a href="/" className="mt-4 inline-block text-blue-600 hover:underline">
-          ← Back to search
-        </a>
+        <Link href="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          Back to search
+        </Link>
       </main>
     );
   }

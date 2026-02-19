@@ -7,6 +7,13 @@ import type { Amenity } from "@/types";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+function escapeHtml(text: string): string {
+  if (typeof document === "undefined") return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 interface MapViewProps {
   lat: number;
   lon: number;
@@ -28,15 +35,32 @@ export default function MapView({ lat, lon, amenities, addressLabel }: MapViewPr
       zoom: 14,
     });
 
+    map.on("load", () => {
+      const attr = map.getContainer().querySelector(".mapboxgl-ctrl-attrib");
+      if (attr?.parentNode) attr.parentNode.removeChild(attr);
+      const bottomRight = map.getContainer().querySelector(".mapboxgl-ctrl-bottom-right");
+      if (bottomRight) {
+        const customAttr = document.createElement("div");
+        customAttr.className = "mapboxgl-ctrl mapboxgl-ctrl-attrib";
+        customAttr.innerHTML = '<a href="https://www.mapbox.com/" target="_blank" rel="noopener noreferrer">© Mapbox</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a>';
+        customAttr.style.fontSize = "10px";
+        customAttr.style.maxWidth = "200px";
+        bottomRight.appendChild(customAttr);
+      }
+    });
+
+    const safeAddress = escapeHtml(addressLabel ?? "Address");
     new mapboxgl.Marker({ color: "#2563eb" })
       .setLngLat([lon, lat])
-      .setPopup(new mapboxgl.Popup().setHTML(`<strong>${addressLabel ?? "Address"}</strong>`))
+      .setPopup(new mapboxgl.Popup().setHTML(`<strong>${safeAddress}</strong>`))
       .addTo(map);
 
     amenities.slice(0, 50).forEach((a) => {
+      const safeName = escapeHtml(a.name);
+      const safeType = escapeHtml(a.type);
       new mapboxgl.Marker({ color: "#16a34a" })
         .setLngLat([a.lon, a.lat])
-        .setPopup(new mapboxgl.Popup().setHTML(`<strong>${a.name}</strong><br/>${a.type}`))
+        .setPopup(new mapboxgl.Popup().setHTML(`<strong>${safeName}</strong><br/>${safeType}`))
         .addTo(map);
     });
 
