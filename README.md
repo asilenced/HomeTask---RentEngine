@@ -1,8 +1,8 @@
 # Address Insights
 
-Enter a street address and get walking score, driving score, area type (urban/suburban/rural), and a map of nearby amenities.
+Enter a street address and get walking score, driving score, area type (urban/suburban/rural), and a map of nearby amenities. Address autocomplete suggests places as you type. Revisited addresses load instantly from a local cache.
 
-**Live app (Vercel):** https://home-task-rent-engine.vercel.app/
+**Live app (Vercel):** [https://home-task-rent-engine.vercel.app/](https://home-task-rent-engine.vercel.app/)
 
 ---
 
@@ -24,12 +24,13 @@ Enter a street address and get walking score, driving score, area type (urban/su
 
 ## Approach
 
-1. **Input:** User enters an address on the home page. Recent searches (from `localStorage`) are shown and can be clicked.
+1. **Input:** User enters an address on the home page. Address autocomplete shows Mapbox suggestions as you type (2+ characters, 300 ms debounce); pick from the dropdown or use keyboard (Arrow keys, Enter, Escape). Recent searches (from `localStorage`) are shown and can be clicked.
 2. **Geocoding:** Mapbox Geocoding API returns coordinates and a display name. Invalid or missing address shows a clear error and a link back to search.
 3. **Amenities:** Overpass API returns OSM nodes (amenity and shop) within 500 m (walking) and 5 km (driving). On 504/503, the server retries and can use a second Overpass endpoint. If amenities still fail, the insights page renders with zero scores and a notice.
 4. **Scores:** Walking score = min(100, round((count/40)×100)). Driving score = min(100, round((count/150)×100)). Area type: urban if walking count ≥ 15, suburban if ≥ 5, else rural.
 5. **Shareable URL:** The insights view is keyed by `?address=...`. Sharing that URL shows the same results. No server-side session.
 6. **History:** The last 10 addresses are stored in `localStorage` and listed on the home page. Opening a shared link adds that address to local history.
+7. **Insights cache:** When insights load, they are stored in `localStorage` by address. Revisiting the same address shows cached data immediately without an API call. The cache is pruned to 20 entries.
 
 ---
 
@@ -37,6 +38,9 @@ Enter a street address and get walking score, driving score, area type (urban/su
 
 - **Heuristic scores:** Scores are not calibrated to external walkability data. The goal is a simple, explainable method: count in radius, linear scale, cap at 100.
 - **Overpass for amenities:** Free and no API key. Mapbox is used only for geocoding and the map. Overpass can be slow or return 504; retries and a second endpoint improve reliability.
-- **Server-side geocode and Overpass:** Both run from the Next.js insights page (server component). The Mapbox token is not needed in the client for the initial data fetch. Overpass is server-side to avoid CORS and to centralize retry/fallback logic.
+- **Autocomplete via Geocoding API:** Uses Mapbox Geocoding with a higher limit for suggestions instead of the Mapbox Search Box SDK. The token stays server-side in `/api/geocode/suggest`.
+- **Client-side insights with cache:** The insights page fetches from `/api/insights` on the client. Cached results in `localStorage` make revisits instant; shareable URLs still work because the API is used when there is no cache.
+- **Server-side geocode and Overpass:** Both run from the `/api/insights` route. The Mapbox token is not needed in the client. Overpass is server-side to avoid CORS and to centralize retry/fallback logic.
 - **Shareable URL = query param only:** No backend session. The address in the URL is the single source of truth for the insights view.
 - **No env files in repo:** `.env.local` and env examples are gitignored. Setup is documented here instead.
+
