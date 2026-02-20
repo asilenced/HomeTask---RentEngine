@@ -6,9 +6,9 @@ Enter a street address and get walking score, driving score, area type (urban/su
 
 **Preview video:**
 
-<video src="assets/preview.mp4" controls width="640">
-  Your browser does not support the video tag. [Watch on OneDrive](https://1drv.ms/v/c/39c581624619fd43/IQDYXvyH0dPORqXFXVHZL3X2AZMhh7L7y-UqjYIO7wiyxrA?e=mV6ckC) instead.
-</video>
+![Preview video](https://github.com/asilenced/HomeTask---RentEngine/blob/main/assets/preview.mp4)
+
+[Watch on OneDrive](https://1drv.ms/v/c/39c581624619fd43/IQDYXvyH0dPORqXFXVHZL3X2AZMhh7L7y-UqjYIO7wiyxrA?e=mV6ckC)
 
 ---
 
